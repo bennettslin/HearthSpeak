@@ -20,12 +20,28 @@
 @property (strong, nonatomic) NSURLSession *dataSession;
 @property (strong, nonatomic) NSURLSession *downloadSession;
 
+  // FIXME: these properties are for getting rid of retired cards
+  // they should be commented out before distribution
+@property (assign, nonatomic) NSUInteger debugCounter;
+@property (strong, nonatomic) NSMutableArray *cardNamesToRemove;
+
 @end
 
 @implementation ViewController
 
 -(void)viewDidLoad {
   [super viewDidLoad];
+
+  for (NSString* family in [UIFont familyNames]) {
+    NSLog(@"%@", family);
+    
+    for (NSString* name in [UIFont fontNamesForFamilyName: family])
+      {
+      NSLog(@"  %@", name);
+      }
+    }
+  
+  self.cardNamesToRemove = [NSMutableArray new];
   
   self.cardPicker.dataSource = self;
   self.cardPicker.delegate = self;
@@ -42,28 +58,39 @@
 }
 
 -(void)populateCardNames {
-  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"hearthstoneCards" ofType:@"json"];
-  NSData *fileData = [NSData dataWithContentsOfFile:filePath];
-  NSError *error;
   
-  NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:fileData options:kNilOptions error:&error];
-  NSMutableArray *tempCardNamesArray = [NSMutableArray arrayWithCapacity:800];
+  NSArray *jsonFileNames = @[@"Basic.enUS", @"Expert.enUS", @"Reward.enUS", @"Promotion.enUS", @"Naxxramas.enUS"];
   
-  for (id key in jsonDictionary) {
-      //    NSLog(@"key is %@, value is %@", key, [jsonDictionary objectForKey:key]);
-    NSArray *cardSetArray = [jsonDictionary objectForKey:key];
-    for (NSDictionary *card in cardSetArray) {
+  NSMutableArray *tempCardNamesArray = [NSMutableArray arrayWithCapacity:568];
+  
+  for (NSString *jsonFileName in jsonFileNames) {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:jsonFileName ofType:@"json"];
+    NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+    NSError *error;
+    
+    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:fileData options:kNilOptions error:&error];
+
+    for (NSDictionary *card in jsonArray) {
       [tempCardNamesArray addObject:card[@"name"]];
     }
   }
   
-  self.cardNames = [tempCardNamesArray sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-  /*
+  NSMutableSet *setToRemoveDuplicates = [NSMutableSet setWithArray:tempCardNamesArray];
+  
+    // retired cards
+  NSArray *arrayOfFileNamesToRemove = @[@"'Inspired'", @"AFK", @"Alexstrasza's Fire", @"Ancestral Infusion", @"Berserk", @"Berserking", @"Blarghghl", @"Blood Pact", @"Bloodrage", @"Bolstered", @"Cabal Control", @"Cannibalize", @"Claws", @"Cleric's Blessing", @"Coin's Vengeance", @"Coin's Vengence", @"Commanding", @"Concealed", @"Consume", @"Dark Command", @"Darkness Calls", @"Demoralizing Roar", @"Elune's Grace", @"Emboldened!", @"Empowered", @"Enhanced", @"Equipped", @"Experiments!", @"Extra Teeth", @"Eye In The Sky", @"Flametongue", @"Frostwolf Banner", @"Full Belly", @"Full Strength", @"Fungal Growth", @"Furious Howl", @"Greenskin's Command", @"Growth", @"Hand of Argus", @"Hexxed", @"Hour of Twilight", @"Infusion", @"Interloper!", @"Justice Served", @"Keeping Secrets", @"Kill Millhouse!", @"Leader of the Pack", @"Level Up!", @"Luck of the Coin", @"Mana Gorged", @"Master's Presence", @"Might of Stormwind", @"Mind Controlling", @"Mlarggragllabl!", @"Mrgglaargl!", @"Mrghlglhal", @"Needs Sharpening", @"Overloading", @"Plague", @"Polarity", @"Power of the Kirin Tor", @"Power of the Ziggurat", @"Raw Power!", @"Shadows of M'uru", @"Sharp!", @"Sharpened", @"Slave of Kel'Thuzad", @"Stand Down!", @"Strength of the Pack", @"Supercharged", @"Teachings of the Kirin Tor", @"Tempered", @"Templar's Verdict", @"Transformed", @"Trapped", @"Treasure Crazed", @"Upgraded", @"Uprooted", @"VanCleef's Vengeance", @"Vengeance", @"Warded", @"Well Fed", @"Whipped Into Shape", @"Yarrr!"];
+  
+  NSSet *setOfFileNamesToRemove = [NSSet setWithArray:arrayOfFileNamesToRemove];
+  [setToRemoveDuplicates minusSet:setOfFileNamesToRemove];
+  NSArray *arrayWithNoDuplicatesAndFilesRemoved = [NSArray arrayWithArray:[setToRemoveDuplicates allObjects]];
+  
+  self.cardNames = [arrayWithNoDuplicatesAndFilesRemoved sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
   for (NSString *cardName in self.cardNames) {
     NSLog(@"%@", cardName);
   }
-  */
-    //  NSLog(@"count is %i", tempCardNamesArray.count);
+
+  NSLog(@"count is %lu", (unsigned long)self.cardNames.count);
 }
 
 -(void)instantiateSessions {
@@ -86,12 +113,17 @@
   return self.cardNames.count;
 }
 
--(NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
-  NSString *title = self.cardNames[row];
-  NSAttributedString *attString = [[NSAttributedString alloc] initWithString:title attributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-  
-  return attString;
+-(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+  UILabel *textView = (UILabel *)view;
+  if (!textView) {
+    textView = [[UILabel alloc] init];
+    textView.font = [UIFont fontWithName:@"BelweBT-Bold" size:20];
+    textView.textColor = [UIColor whiteColor];
+    textView.textAlignment = NSTextAlignmentCenter;
+  }
+    // Fill the label text here
+  textView.text = self.cardNames[row];
+  return textView;
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
@@ -122,18 +154,15 @@
     NSDictionary *queryDictionary = jsonDictionary[@"query"];
     NSArray *allImagesArray = queryDictionary[@"allimages"];
     
-    NSString *lowercaseFormattedString = [formattedName lowercaseString];
-    
     for (NSDictionary *dictionary in allImagesArray) {
-      NSString *lowercaseDictionaryString = [dictionary[@"name"] lowercaseString];
+      NSString *dictionaryString = dictionary[@"name"];
+      NSString *formattedDictionaryString = [self formatCardName:dictionaryString];
       
-      NSRange textRange = [lowercaseDictionaryString rangeOfString:lowercaseFormattedString];
+      NSRange textRange = [formattedDictionaryString rangeOfString:formattedName];
       
       if (textRange.location != NSNotFound) {
-        
-        NSLog(@"imageUrl is %@", dictionary[@"url"]);
+
         NSURL *newURL = [NSURL URLWithString:dictionary[@"url"]];
-        
         [self fetchDownloadForURL:newURL];
       }
     }
@@ -145,7 +174,6 @@
 -(void)fetchDownloadForURL:(NSURL *)url {
   
   NSURLRequest *request = [NSURLRequest requestWithURL:url];
-  
   NSURLSessionDownloadTask *downloadTask = [self.downloadSession downloadTaskWithRequest:request];
   
   [downloadTask resume];
@@ -167,9 +195,20 @@
 #pragma mark - card helper methods
 
 -(NSString *)formatCardName:(NSString *)unformattedName {
-  NSString *capitalisedString = [unformattedName capitalizedString];
-  NSString *underscoredString = [capitalisedString stringByReplacingOccurrencesOfString:@" " withString:@"_"];
-  return underscoredString;
+  NSString *underscoredString = [unformattedName stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+  NSString *apostrophedString = [underscoredString stringByReplacingOccurrencesOfString:@"'" withString:@"%27"];
+  NSString *colonedString = [apostrophedString stringByReplacingOccurrencesOfString:@":" withString:@"-"];
+  return colonedString;
+}
+
+#pragma mark - debug methods
+
+-(void)checkIfCardIsRetiredAtIndex {
+  
+  NSString *pickedCardName = self.cardNames[self.debugCounter];
+  NSString *formattedPickedCardName = [self formatCardName:pickedCardName];
+  [self fetchURLDataForFormattedCardName:formattedPickedCardName];
+  
 }
 
 @end
