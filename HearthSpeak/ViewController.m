@@ -31,15 +31,6 @@
 
 -(void)viewDidLoad {
   [super viewDidLoad];
-
-  for (NSString* family in [UIFont familyNames]) {
-    NSLog(@"%@", family);
-    
-    for (NSString* name in [UIFont fontNamesForFamilyName: family])
-      {
-      NSLog(@"  %@", name);
-      }
-    }
   
   self.cardNamesToRemove = [NSMutableArray new];
   
@@ -49,6 +40,8 @@
   [self declareImageViewProperties];
   [self populateCardNames];
   [self instantiateSessions];
+  
+  [self pickerView:self.cardPicker didSelectRow:0 inComponent:0];
 }
 
 -(void)declareImageViewProperties {
@@ -61,7 +54,7 @@
   
   NSArray *jsonFileNames = @[@"Basic.enUS", @"Expert.enUS", @"Reward.enUS", @"Promotion.enUS", @"Naxxramas.enUS"];
   
-  NSMutableArray *tempCardNamesArray = [NSMutableArray arrayWithCapacity:568];
+  NSMutableArray *tempCardNamesArray = [NSMutableArray arrayWithCapacity:549];
   
   for (NSString *jsonFileName in jsonFileNames) {
     NSString *filePath = [[NSBundle mainBundle] pathForResource:jsonFileName ofType:@"json"];
@@ -77,8 +70,13 @@
   
   NSMutableSet *setToRemoveDuplicates = [NSMutableSet setWithArray:tempCardNamesArray];
   
-    // retired cards
-  NSArray *arrayOfFileNamesToRemove = @[@"'Inspired'", @"AFK", @"Alexstrasza's Fire", @"Ancestral Infusion", @"Berserk", @"Berserking", @"Blarghghl", @"Blood Pact", @"Bloodrage", @"Bolstered", @"Cabal Control", @"Cannibalize", @"Claws", @"Cleric's Blessing", @"Coin's Vengeance", @"Coin's Vengence", @"Commanding", @"Concealed", @"Consume", @"Dark Command", @"Darkness Calls", @"Demoralizing Roar", @"Elune's Grace", @"Emboldened!", @"Empowered", @"Enhanced", @"Equipped", @"Experiments!", @"Extra Teeth", @"Eye In The Sky", @"Flametongue", @"Frostwolf Banner", @"Full Belly", @"Full Strength", @"Fungal Growth", @"Furious Howl", @"Greenskin's Command", @"Growth", @"Hand of Argus", @"Hexxed", @"Hour of Twilight", @"Infusion", @"Interloper!", @"Justice Served", @"Keeping Secrets", @"Kill Millhouse!", @"Leader of the Pack", @"Level Up!", @"Luck of the Coin", @"Mana Gorged", @"Master's Presence", @"Might of Stormwind", @"Mind Controlling", @"Mlarggragllabl!", @"Mrgglaargl!", @"Mrghlglhal", @"Needs Sharpening", @"Overloading", @"Plague", @"Polarity", @"Power of the Kirin Tor", @"Power of the Ziggurat", @"Raw Power!", @"Shadows of M'uru", @"Sharp!", @"Sharpened", @"Slave of Kel'Thuzad", @"Stand Down!", @"Strength of the Pack", @"Supercharged", @"Teachings of the Kirin Tor", @"Tempered", @"Templar's Verdict", @"Transformed", @"Trapped", @"Treasure Crazed", @"Upgraded", @"Uprooted", @"VanCleef's Vengeance", @"Vengeance", @"Warded", @"Well Fed", @"Whipped Into Shape", @"Yarrr!"];
+    // retired cards, heroes, and Naxx bosses that are not cards
+  NSArray *arrayOfFileNamesToRemove = @[@"'Inspired'", @"AFK", @"Alexstrasza's Fire", @"Ancestral Infusion", @"Berserk", @"Berserking", @"Blarghghl", @"Blood Pact", @"Bloodrage", @"Bolstered", @"Cabal Control", @"Cannibalize", @"Claws", @"Cleric's Blessing", @"Coin's Vengeance", @"Coin's Vengence", @"Commanding", @"Concealed", @"Consume", @"Dark Command", @"Darkness Calls", @"Demoralizing Roar", @"Elune's Grace", @"Emboldened!", @"Empowered", @"Enhanced", @"Equipped", @"Experiments!", @"Extra Teeth", @"Eye In The Sky", @"Flametongue", @"Frostwolf Banner", @"Full Belly", @"Full Strength", @"Fungal Growth", @"Furious Howl", @"Greenskin's Command", @"Growth", @"Hand of Argus", @"Hexxed", @"Hour of Twilight", @"Infusion", @"Interloper!", @"Justice Served", @"Keeping Secrets", @"Kill Millhouse!", @"Leader of the Pack", @"Level Up!", @"Luck of the Coin", @"Mana Gorged", @"Master's Presence", @"Might of Stormwind", @"Mind Controlling", @"Mlarggragllabl!", @"Mrgglaargl!", @"Mrghlglhal", @"Needs Sharpening", @"Overloading", @"Plague", @"Polarity", @"Power of the Kirin Tor", @"Power of the Ziggurat", @"Raw Power!", @"Shadows of M'uru", @"Sharp!", @"Sharpened", @"Slave of Kel'Thuzad", @"Stand Down!", @"Strength of the Pack", @"Supercharged", @"Teachings of the Kirin Tor", @"Tempered", @"Templar's Verdict", @"Transformed", @"Trapped", @"Treasure Crazed", @"Upgraded", @"Uprooted", @"VanCleef's Vengeance", @"Vengeance", @"Warded", @"Well Fed", @"Whipped Into Shape", @"Yarrr!",
+                                        
+      @"Anduin Wrynn", @"Garrosh Hellscream", @"Gul'dan", @"Jaina Proudmoore", @"Malfurion Stormrage", @"Rexxar", @"Thrall", @"Uther Lightbringer", @"Valeera Sanguinar",
+                                        
+      @"Anub'Rekhan", @"Grand Widow Faerlina", @"Noth the Plaguebringer", @"Heigan the Unclean", @"Instructor Razuvious", @"Gothik the Harvester", @"Patchwerk", @"Grobbulus", @"Gluth", @"Sapphiron"
+      ];
   
   NSSet *setOfFileNamesToRemove = [NSSet setWithArray:arrayOfFileNamesToRemove];
   [setToRemoveDuplicates minusSet:setOfFileNamesToRemove];
