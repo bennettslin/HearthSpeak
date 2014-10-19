@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F0F4C5819F32A8900C8B165 /* wood_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3F0F4C5719F32A8900C8B165 /* wood_background.jpg */; };
 		3F39625B19F0C09600432C0B /* Basic.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625219F0C09600432C0B /* Basic.enUS.json */; };
 		3F39625C19F0C09600432C0B /* Credits.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625319F0C09600432C0B /* Credits.enUS.json */; };
 		3F39625D19F0C09600432C0B /* Naxxramas.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625419F0C09600432C0B /* Naxxramas.enUS.json */; };
@@ -17,12 +18,11 @@
 		3F39626219F0C09600432C0B /* Reward.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625919F0C09600432C0B /* Reward.enUS.json */; };
 		3F39626319F0C09600432C0B /* System.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625A19F0C09600432C0B /* System.enUS.json */; };
 		3F7C65AE19F0DE1400A59F7D /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3F7C65AA19F0DE1400A59F7D /* AcousticModelEnglish.bundle */; };
-		3F7C65AF19F0DE1400A59F7D /* AcousticModelSpanish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3F7C65AB19F0DE1400A59F7D /* AcousticModelSpanish.bundle */; };
 		3F7C65B019F0DE1400A59F7D /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F7C65AC19F0DE1400A59F7D /* OpenEars.framework */; };
-		3F7C65B119F0DE1400A59F7D /* Slt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F7C65AD19F0DE1400A59F7D /* Slt.framework */; };
+		3FC662FC19F35941005D9051 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FC662FB19F35941005D9051 /* Images.xcassets */; };
+		3FC662FF19F36BA9005D9051 /* SpeechEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC662FE19F36BA9005D9051 /* SpeechEngine.m */; };
 		3FDB49BB19F0BD4F0091456F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDB49BA19F0BD4F0091456F /* main.m */; };
 		3FDB49BE19F0BD4F0091456F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDB49BD19F0BD4F0091456F /* AppDelegate.m */; };
-		3FDB49C619F0BD4F0091456F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FDB49C519F0BD4F0091456F /* Images.xcassets */; };
 		3FDB49C919F0BD4F0091456F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FDB49C719F0BD4F0091456F /* LaunchScreen.xib */; };
 		3FDB49D519F0BD4F0091456F /* HearthSpeakTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDB49D419F0BD4F0091456F /* HearthSpeakTests.m */; };
 		3FDB49DF19F0BD5E0091456F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FDB49DE19F0BD5E0091456F /* AudioToolbox.framework */; };
@@ -30,7 +30,6 @@
 		3FDB49E519F0BD900091456F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FDB49E319F0BD900091456F /* ViewController.m */; };
 		3FDB49E619F0BD900091456F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FDB49E419F0BD900091456F /* Main.storyboard */; };
 		3FDB49E819F0BDA20091456F /* allSets.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3FDB49E719F0BDA20091456F /* allSets.enUS.json */; };
-		3FDB49EA19F0BDAC0091456F /* ironbeakowl.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FDB49E919F0BDAC0091456F /* ironbeakowl.png */; };
 		3FE3A08019F20FD20085A0A8 /* Belwe.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3FE3A07F19F20FBB0085A0A8 /* Belwe.ttf */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F0F4C5719F32A8900C8B165 /* wood_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood_background.jpg; sourceTree = "<group>"; };
 		3F39625219F0C09600432C0B /* Basic.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Basic.enUS.json; sourceTree = "<group>"; };
 		3F39625319F0C09600432C0B /* Credits.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Credits.enUS.json; sourceTree = "<group>"; };
 		3F39625419F0C09600432C0B /* Naxxramas.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Naxxramas.enUS.json; sourceTree = "<group>"; };
@@ -55,15 +55,15 @@
 		3F39625919F0C09600432C0B /* Reward.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Reward.enUS.json; sourceTree = "<group>"; };
 		3F39625A19F0C09600432C0B /* System.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = System.enUS.json; sourceTree = "<group>"; };
 		3F7C65AA19F0DE1400A59F7D /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
-		3F7C65AB19F0DE1400A59F7D /* AcousticModelSpanish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelSpanish.bundle; sourceTree = "<group>"; };
 		3F7C65AC19F0DE1400A59F7D /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
-		3F7C65AD19F0DE1400A59F7D /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
+		3FC662FB19F35941005D9051 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		3FC662FD19F36BA9005D9051 /* SpeechEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechEngine.h; sourceTree = "<group>"; };
+		3FC662FE19F36BA9005D9051 /* SpeechEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeechEngine.m; sourceTree = "<group>"; };
 		3FDB49B519F0BD4F0091456F /* HearthSpeak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HearthSpeak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FDB49B919F0BD4F0091456F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FDB49BA19F0BD4F0091456F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3FDB49BC19F0BD4F0091456F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3FDB49BD19F0BD4F0091456F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		3FDB49C519F0BD4F0091456F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3FDB49C819F0BD4F0091456F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		3FDB49CE19F0BD4F0091456F /* HearthSpeakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HearthSpeakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FDB49D319F0BD4F0091456F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -74,7 +74,6 @@
 		3FDB49E319F0BD900091456F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		3FDB49E419F0BD900091456F /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		3FDB49E719F0BDA20091456F /* allSets.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = allSets.enUS.json; sourceTree = "<group>"; };
-		3FDB49E919F0BDAC0091456F /* ironbeakowl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ironbeakowl.png; sourceTree = "<group>"; };
 		3FE3A07F19F20FBB0085A0A8 /* Belwe.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Belwe.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,7 +82,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F7C65B119F0DE1400A59F7D /* Slt.framework in Frameworks */,
 				3FDB49DF19F0BD5E0091456F /* AudioToolbox.framework in Frameworks */,
 				3FDB49E119F0BD660091456F /* AVFoundation.framework in Frameworks */,
 				3F7C65B019F0DE1400A59F7D /* OpenEars.framework in Frameworks */,
@@ -104,9 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				3F7C65AA19F0DE1400A59F7D /* AcousticModelEnglish.bundle */,
-				3F7C65AB19F0DE1400A59F7D /* AcousticModelSpanish.bundle */,
 				3F7C65AC19F0DE1400A59F7D /* OpenEars.framework */,
-				3F7C65AD19F0DE1400A59F7D /* Slt.framework */,
 			);
 			path = Framework;
 			sourceTree = "<group>";
@@ -136,13 +132,15 @@
 			isa = PBXGroup;
 			children = (
 				3FE3A07F19F20FBB0085A0A8 /* Belwe.ttf */,
-				3FDB49E919F0BDAC0091456F /* ironbeakowl.png */,
+				3F0F4C5719F32A8900C8B165 /* wood_background.jpg */,
 				3FDB49BC19F0BD4F0091456F /* AppDelegate.h */,
 				3FDB49BD19F0BD4F0091456F /* AppDelegate.m */,
 				3FDB49E219F0BD900091456F /* ViewController.h */,
 				3FDB49E319F0BD900091456F /* ViewController.m */,
+				3FC662FD19F36BA9005D9051 /* SpeechEngine.h */,
+				3FC662FE19F36BA9005D9051 /* SpeechEngine.m */,
 				3FDB49E419F0BD900091456F /* Main.storyboard */,
-				3FDB49C519F0BD4F0091456F /* Images.xcassets */,
+				3FC662FB19F35941005D9051 /* Images.xcassets */,
 				3FDB49C719F0BD4F0091456F /* LaunchScreen.xib */,
 				3FDB49B819F0BD4F0091456F /* Supporting Files */,
 			);
@@ -269,19 +267,18 @@
 				3FDB49E619F0BD900091456F /* Main.storyboard in Resources */,
 				3FDB49C919F0BD4F0091456F /* LaunchScreen.xib in Resources */,
 				3FE3A08019F20FD20085A0A8 /* Belwe.ttf in Resources */,
-				3FDB49C619F0BD4F0091456F /* Images.xcassets in Resources */,
 				3F7C65AE19F0DE1400A59F7D /* AcousticModelEnglish.bundle in Resources */,
 				3F39626119F0C09600432C0B /* Promotion.enUS.json in Resources */,
-				3F7C65AF19F0DE1400A59F7D /* AcousticModelSpanish.bundle in Resources */,
+				3FC662FC19F35941005D9051 /* Images.xcassets in Resources */,
 				3F39626319F0C09600432C0B /* System.enUS.json in Resources */,
 				3F39625F19F0C09600432C0B /* Expert.enUS.json in Resources */,
 				3F39626019F0C09600432C0B /* Missions.enUS.json in Resources */,
 				3FDB49E819F0BDA20091456F /* allSets.enUS.json in Resources */,
 				3F39626219F0C09600432C0B /* Reward.enUS.json in Resources */,
 				3F39625E19F0C09600432C0B /* Debug.enUS.json in Resources */,
+				3F0F4C5819F32A8900C8B165 /* wood_background.jpg in Resources */,
 				3F39625C19F0C09600432C0B /* Credits.enUS.json in Resources */,
 				3F39625B19F0C09600432C0B /* Basic.enUS.json in Resources */,
-				3FDB49EA19F0BDAC0091456F /* ironbeakowl.png in Resources */,
 				3F39625D19F0C09600432C0B /* Naxxramas.enUS.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,6 +300,7 @@
 				3FDB49E519F0BD900091456F /* ViewController.m in Sources */,
 				3FDB49BE19F0BD4F0091456F /* AppDelegate.m in Sources */,
 				3FDB49BB19F0BD4F0091456F /* main.m in Sources */,
+				3FC662FF19F36BA9005D9051 /* SpeechEngine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,9 +418,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/HearthSpeak/OpenEarsDistribution/Framework",
 					"$(PROJECT_DIR)/Framework",
 				);
 				INFOPLIST_FILE = HearthSpeak/Info.plist;
@@ -438,9 +436,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/HearthSpeak/OpenEarsDistribution/Framework",
 					"$(PROJECT_DIR)/Framework",
 				);
 				INFOPLIST_FILE = HearthSpeak/Info.plist;
