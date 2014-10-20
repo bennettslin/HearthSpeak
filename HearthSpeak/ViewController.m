@@ -11,31 +11,35 @@
 #import "ViewController.h"
 #import "SpeechEngine.h"
 #import <AVFoundation/AVFoundation.h>
+#import "Constants.h"
 
 #define kKnownCardsCount 549
 #define kImageViewWidth 320
 #define kImageViewHeight 396
 #define kPickerWidth 240
 #define kPickerHeight 162
+#define kStatusLabelWidth 60
+#define kStatusLabelHeight 60
 #define kBottomPadding 10
 #define kSidePadding 10
 
 @interface ViewController () <UIPickerViewDataSource, UIPickerViewDelegate, NSURLSessionDownloadDelegate, OpenEarsSpeechEngineDelegate>
 
+@property (strong, nonatomic) NSArray *displayCardNames;
+@property (strong, nonatomic) NSArray *uppercaseSpacedCardNames;
+
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIPickerView *cardPicker;
+@property (strong, nonatomic) UILabel *statusLabel;
 
-@property (strong, nonatomic) NSArray *cardNames;
+@property (strong, nonatomic) UIAlertController *sessionAlertController;
+@property (strong, nonatomic) UIAlertController *micAlertController;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @property (strong, nonatomic) NSURLSession *dataSession;
 @property (strong, nonatomic) NSURLSession *downloadSession;
 
-@property (strong, nonatomic) UIAlertController *sessionAlertController;
-@property (strong, nonatomic) UIAlertController *micAlertController;
-
 @property (strong, nonatomic) SpeechEngine *speechEngine;
-
-@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
@@ -51,9 +55,10 @@
 -(void)viewDidLoad {
   [super viewDidLoad];
   
+  _statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+  
   _screenShort = self.view.bounds.size.width;
   _screenLong = self.view.bounds.size.height;
-  _statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
   
   if (_screenShort > _screenLong) {
     CGFloat higherValue = _screenShort;
@@ -65,14 +70,13 @@
   
   [self instantiatePicker];
   [self instantiateImageView];
+  [self instantiateStatusLabel];
   [self instantiateActivityIndicator];
   [self populateCardNames];
   [self instantiateSessions];
-  
-  [self showFirstCard];
-//  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationWillEnterForegroundNotification object:nil];
-//  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationDidFinishLaunchingNotification object:nil];
-  
+
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationWillEnterForegroundNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationDidFinishLaunchingNotification object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resizeAndRepositionBasedOnOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
   
     // first card is shown either when mic permission is proven granted
@@ -85,7 +89,7 @@
 
 -(void)resizeAndRepositionBasedOnOrientation:(NSNotification *)notification {
   
-  NSLog(@"status bar height is %.2f", _statusBarHeight);
+//  NSLog(@"status bar height is %.2f", _statusBarHeight);
   const CGFloat minimumScreenHeight = _statusBarHeight + kImageViewHeight + kPickerHeight + kBottomPadding;
   const CGFloat minimumScreenWidth = kImageViewWidth + kPickerWidth + (kSidePadding * 2);
   
@@ -94,62 +98,69 @@
   CGFloat verticalMargin;
   CGFloat horizontalMargin;
   
+  CGFloat pickerAndStatusHorizontalMargin;
+  CGFloat pickerAhdStatusVerticalMargin;
+  
   UIDevice *device = [UIDevice currentDevice];
   UIDeviceOrientation orientation = device.orientation;
   
   switch (orientation) {
       
-    case UIDeviceOrientationPortraitUpsideDown:
+    case UIDeviceOrientationPortrait:
+      imageViewHeight = _screenLong > minimumScreenHeight ?
+      kImageViewHeight : _screenLong - _statusBarHeight - kPickerHeight - kBottomPadding;
+      verticalMargin = (_screenLong - _statusBarHeight - imageViewHeight - kPickerHeight - kBottomPadding) / 3;
       
-      NSLog(@"portrait upside down");
+      pickerAndStatusHorizontalMargin = (_screenShort - kPickerWidth - kStatusLabelWidth) / 3;
+      
+      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _statusBarHeight + verticalMargin, kImageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(pickerAndStatusHorizontalMargin, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
+      self.statusLabel.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusLabel.center = CGPointMake(self.statusLabel.center.x, self.cardPicker.center.y);
+      break;
+      
+    case UIDeviceOrientationPortraitUpsideDown:
       imageViewHeight = _screenLong > minimumScreenHeight ?
           kImageViewHeight : _screenLong - _statusBarHeight - kPickerHeight - kBottomPadding;
       verticalMargin = (_screenLong - _statusBarHeight - imageViewHeight - kPickerHeight - kBottomPadding) / 3;
       
-      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _screenLong - imageViewHeight - kBottomPadding - verticalMargin, kImageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake((_screenShort - kPickerWidth) / 2, _statusBarHeight + verticalMargin, kPickerWidth, kPickerHeight);
+      pickerAndStatusHorizontalMargin = (_screenShort - kPickerWidth - kStatusLabelWidth) / 3;
       
+      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _screenLong - imageViewHeight - kBottomPadding - verticalMargin, kImageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(pickerAndStatusHorizontalMargin, _statusBarHeight + verticalMargin, kPickerWidth, kPickerHeight);
+      self.statusLabel.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusLabel.center = CGPointMake(self.statusLabel.center.x, self.cardPicker.center.y);
       break;
       
     case UIDeviceOrientationLandscapeLeft:
-      
-      NSLog(@"landscape left");
       imageViewWidth = _screenLong > minimumScreenWidth ?
           kImageViewWidth : _screenLong - kPickerWidth - (kSidePadding * 2);
       imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
       horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
       
-      self.imageView.frame = CGRectMake(horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, (_screenShort - kPickerHeight) / 2, kPickerWidth, kPickerHeight);
+      pickerAhdStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
       
+      self.imageView.frame = CGRectMake(horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
+      self.statusLabel.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusLabel.center = CGPointMake(self.cardPicker.center.x, self.statusLabel.center.y);
       break;
       
     case UIDeviceOrientationLandscapeRight:
-      
-      NSLog(@"landscape right");
-
       imageViewWidth = _screenLong > minimumScreenWidth ?
           kImageViewWidth : _screenLong - kPickerWidth - (kSidePadding * 2);
       imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
       horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
       
-      self.imageView.frame = CGRectMake(_screenLong - imageViewWidth - horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake(horizontalMargin, (_screenShort - kPickerHeight) / 2, kPickerWidth, kPickerHeight);
+      pickerAhdStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
       
+      self.imageView.frame = CGRectMake(_screenLong - imageViewWidth - horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
+      self.statusLabel.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusLabel.center = CGPointMake(self.cardPicker.center.x, self.statusLabel.center.y);
       break;
 
-    case UIDeviceOrientationPortrait:
-    default:
-      
-      NSLog(@"portrait");
-      imageViewHeight = _screenLong > minimumScreenHeight ?
-          kImageViewHeight : _screenLong - _statusBarHeight - kPickerHeight - kBottomPadding;
-      verticalMargin = (_screenLong - _statusBarHeight - imageViewHeight - kPickerHeight - kBottomPadding) / 3;
-      NSLog(@"vertical margin is %.2f", verticalMargin);
-      
-      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _statusBarHeight + verticalMargin, kImageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake((_screenShort - kPickerWidth) / 2, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
-      
+      default:
       break;
   }
   
@@ -183,7 +194,7 @@
 #pragma mark - setup methods
 
 -(void)instantiatePicker {
-  self.cardPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 0, 290, 162)];
+  self.cardPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 0, kPickerWidth, kPickerHeight)];
   [self.view addSubview:self.cardPicker];
   self.cardPicker.dataSource = self;
   self.cardPicker.delegate = self;
@@ -195,20 +206,53 @@
   self.activityIndicator.hidesWhenStopped = YES;
 }
 
+-(void)instantiateStatusLabel {
+  self.statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kStatusLabelWidth, kStatusLabelHeight)];
+  self.statusLabel.font = [UIFont fontWithName:kBelweFont size:16];
+  self.statusLabel.adjustsFontSizeToFitWidth = YES;
+  [self.view addSubview:self.statusLabel];
+}
+
+-(void)updateStatusLabelForOpenEarsStatus:(OpenEarsStatus)status {
+  switch (status) {
+    case kOpenEarsNotAvailable:
+      self.statusLabel.text = @"mic not available";
+      self.statusLabel.textColor = [UIColor redColor];
+      break;
+    case kOpenEarsLoading:
+      self.statusLabel.text = @"loading...";
+      self.statusLabel.textColor = [UIColor orangeColor];
+      break;
+    case kOpenEarsStartedListening:
+      self.statusLabel.text = @"listening";
+      self.statusLabel.textColor = [UIColor greenColor];
+      break;
+    default:
+      break;
+  }
+}
+
 -(void)requestMicPermission {
   [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
     if (granted) {
-      NSLog(@"permission granted in requestMicPermission");
+//      NSLog(@"permission granted in requestMicPermission");
       if (!self.speechEngine) {
         self.speechEngine = [SpeechEngine new];
         self.speechEngine.delegate = self;
-        [self.speechEngine setupOpenEarsWithCardNames:self.cardNames];
+        
+        __weak typeof(self) weakSelf = self;
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+          [weakSelf.speechEngine setupOpenEarsWithCardNames:self.uppercaseSpacedCardNames];
+        });
+
 //        [self.speechEngine startLogging];
         [self showFirstCard];
       }
     } else {
-      NSLog(@"permission not granted in requestMicPermission");
+//      NSLog(@"permission not granted in requestMicPermission");
       [self handleMicError];
+      [self updateStatusLabelForOpenEarsStatus:kOpenEarsNotAvailable];
     }
   }];
 }
@@ -251,8 +295,19 @@
   [setToRemoveDuplicates minusSet:setOfFileNamesToRemove];
   NSArray *arrayWithNoDuplicatesAndFilesRemoved = [NSArray arrayWithArray:[setToRemoveDuplicates allObjects]];
   
-  self.cardNames = [arrayWithNoDuplicatesAndFilesRemoved sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+  self.displayCardNames = [arrayWithNoDuplicatesAndFilesRemoved sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 
+  NSMutableArray *tempUppercaseArray = [NSMutableArray new];
+  for (NSString *displayString in self.displayCardNames) {
+    NSString *uppercaseString = [self uppercaseStringWithPunctuationReplacedByWhitespace:displayString];
+    [tempUppercaseArray addObject:uppercaseString];
+  }
+  self.uppercaseSpacedCardNames = [NSArray arrayWithArray:tempUppercaseArray];
+  
+//  NSLog(@"self.displayCardNames is %@", self.displayCardNames);
+//  NSLog(@"self.uppercaseSpacedCardNames is %@", self.uppercaseSpacedCardNames);
+  
+  /*
   NSUInteger longestCardNameLength = 0;
   NSString *longestCardName;
   for (NSString *cardName in self.cardNames) {
@@ -262,11 +317,9 @@
       longestCardName = cardName;
     }
   }
-  
   NSLog(@"longestCardName is %i, %@", longestCardNameLength, longestCardName);
-  
-//
-//  NSLog(@"count is %lu", (unsigned long)self.cardNames.count);
+  NSLog(@"count is %lu", (unsigned long)self.cardNames.count);
+   */
 }
 
 -(void)instantiateSessions {
@@ -283,11 +336,14 @@
 
 -(void)movePickerToClosestCardForHypothesisedString:(NSString *)hypothesisedString {
   
-  NSUInteger index = [self.speechEngine closestIndexForString:hypothesisedString inArray:self.cardNames];
-  [self.cardPicker selectRow:index inComponent:0 animated:YES];
+  NSUInteger index = [self.speechEngine closestIndexForString:hypothesisedString inArray:self.uppercaseSpacedCardNames];
   
-    // weird to call this, but it seems like it doesn't get called otherwise by selectRow: method
-  [self pickerView:self.cardPicker didSelectRow:index inComponent:0];
+  if (index != NSUIntegerMax) {
+    [self.cardPicker selectRow:index inComponent:0 animated:YES];
+    
+      // weird to call this, but it seems like it doesn't get called otherwise by selectRow: method
+    [self pickerView:self.cardPicker didSelectRow:index inComponent:0];
+  }
 }
 
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -295,7 +351,7 @@
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-  return self.cardNames.count;
+  return self.displayCardNames.count;
 }
 
 -(UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
@@ -303,18 +359,18 @@
   UILabel *textView = (UILabel *)view;
   if (!textView) {
     textView = [[UILabel alloc] init];
-    textView.font = [UIFont fontWithName:@"BelweBT-Bold" size:20];
+    textView.font = [UIFont fontWithName:kBelweFont size:20];
     textView.textColor = [UIColor whiteColor];
     textView.textAlignment = NSTextAlignmentCenter;
   }
     // Fill the label text here
-  textView.text = self.cardNames[row];
+  textView.text = self.displayCardNames[row];
   return textView;
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
   
-  NSString *pickedCardName = self.cardNames[row];
+  NSString *pickedCardName = self.displayCardNames[row];
   NSString *formattedPickedCardName = [self formatCardName:pickedCardName];
   [self fetchURLDataForFormattedCardName:formattedPickedCardName];
 }
@@ -335,14 +391,16 @@
     cardLimit = 2;
   } else if ([formattedName isEqualToString:@"Lord_Jaraxxus"]) {
     cardLimit = 2;
+  } else if ([formattedName isEqualToString:@"Millhouse_Manastorm"]) {
+    cardLimit = 2;
   } else if ([formattedName isEqualToString:@"Sen%27jin_Shieldmasta"]) {
     cardLimit = 2;
   }
   
-  NSString *urlString = [NSString stringWithFormat:@"http://hearthstone.gamepedia.com/api.php?action=query&list=allimages&format=json&aimime=image/png&ailimit=%i&aifrom=%@", cardLimit, formattedName];
+  NSString *urlString = [NSString stringWithFormat:@"http://hearthstone.gamepedia.com/api.php?action=query&list=allimages&format=json&aimime=image/png&ailimit=%lu&aifrom=%@", (unsigned long)cardLimit, formattedName];
   
   NSURL *dataUrl = [NSURL URLWithString:urlString];
-  NSLog(@"dataUrl is %@", dataUrl);
+//  NSLog(@"dataUrl is %@", dataUrl);
   
   NSURLRequest *dataRequest = [NSURLRequest requestWithURL:dataUrl];
   
@@ -411,26 +469,22 @@
 #pragma mark - activity indicator
 
 -(void)startActivityIndicator {
-//  NSLog(@"activity start");
   if (!self.activityIndicator.isAnimating) {
     [NSThread detachNewThreadSelector:@selector(startActivityIndicatorInNewThread) toTarget:self withObject:nil];
   }
 }
 
 -(void)startActivityIndicatorInNewThread {
-//  NSLog(@"activity start in new thread");
   [self.activityIndicator startAnimating];
 }
 
 -(void)stopActivityIndicator {
-//  NSLog(@"activity stop");
   if (self.activityIndicator.isAnimating) {
     [NSThread detachNewThreadSelector:@selector(stopActivityIndicatorInNewThread) toTarget:self withObject:nil];
   }
 }
 
 -(void)stopActivityIndicatorInNewThread {
-//  NSLog(@"activity stop in new thread");
   [self.activityIndicator stopAnimating];
 }
 
@@ -441,6 +495,16 @@
   NSString *apostrophedString = [underscoredString stringByReplacingOccurrencesOfString:@"'" withString:@"%27"];
   NSString *colonedString = [apostrophedString stringByReplacingOccurrencesOfString:@":" withString:@"-"];
   return colonedString;
+}
+
+-(NSString *)uppercaseStringWithPunctuationReplacedByWhitespace:(NSString *)rawString {
+  NSString *uppercaseString = [rawString uppercaseString];
+  NSString *noColonString = [uppercaseString stringByReplacingOccurrencesOfString:@":" withString:@""];
+  NSString *noApostropheString = [noColonString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+  NSString *noPeriodString = [noApostropheString stringByReplacingOccurrencesOfString:@"." withString:@""];
+  NSString *noExclamationString = [noPeriodString stringByReplacingOccurrencesOfString:@"!" withString:@""];
+  NSString *noHyphenString = [noExclamationString stringByReplacingOccurrencesOfString:@"-" withString:@""];
+  return noHyphenString;
 }
 
 #pragma mark - system methods

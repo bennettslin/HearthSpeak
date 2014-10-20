@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Bennett Lin. All rights reserved.
 //
 
+#import "Constants.h"
+
 #import <Foundation/Foundation.h>
 
 @protocol OpenEarsSpeechEngineDelegate;
@@ -25,5 +27,6 @@
 -(void)handleMicError;
 -(void)movePickerToClosestCardForHypothesisedString:(NSString *)hypothesis;
 -(void)startActivityIndicator;
+-(void)updateStatusLabelForOpenEarsStatus:(OpenEarsStatus)status;
 
 @end
