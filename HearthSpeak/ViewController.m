@@ -13,11 +13,17 @@
 #import <AVFoundation/AVFoundation.h>
 
 #define kKnownCardsCount 549
+#define kImageViewWidth 320
+#define kImageViewHeight 396
+#define kPickerWidth 240
+#define kPickerHeight 162
+#define kBottomPadding 10
+#define kSidePadding 10
 
 @interface ViewController () <UIPickerViewDataSource, UIPickerViewDelegate, NSURLSessionDownloadDelegate, OpenEarsSpeechEngineDelegate>
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
-@property (weak, nonatomic) IBOutlet UIPickerView *cardPicker;
+@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) UIPickerView *cardPicker;
 
 @property (strong, nonatomic) NSArray *cardNames;
 
@@ -29,36 +35,126 @@
 
 @property (strong, nonatomic) SpeechEngine *speechEngine;
 
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 
 @end
 
-@implementation ViewController
+@implementation ViewController {
+  CGFloat _screenShort;
+  CGFloat _screenLong;
+  CGFloat _statusBarHeight;
+}
+
 @synthesize sessionAlertController = _sessionAlertController;
 @synthesize micAlertController = _micAlertController;
 
 -(void)viewDidLoad {
   [super viewDidLoad];
+  
+  _screenShort = self.view.bounds.size.width;
+  _screenLong = self.view.bounds.size.height;
+  _statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+  
+  if (_screenShort > _screenLong) {
+    CGFloat higherValue = _screenShort;
+    _screenShort = _screenLong;
+    _screenLong = higherValue;
+  }
 
   self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wood_background.jpg"]];
   
-  self.cardPicker.dataSource = self;
-  self.cardPicker.delegate = self;
-  
-  [self declareImageViewProperties];
+  [self instantiatePicker];
+  [self instantiateImageView];
+  [self instantiateActivityIndicator];
   [self populateCardNames];
   [self instantiateSessions];
   
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationWillEnterForegroundNotification object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationDidFinishLaunchingNotification object:nil];
+  [self showFirstCard];
+//  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationWillEnterForegroundNotification object:nil];
+//  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestMicPermission) name:UIApplicationDidFinishLaunchingNotification object:nil];
+  
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resizeAndRepositionBasedOnOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
   
     // first card is shown either when mic permission is proven granted
     // or else after mic alert controller is presented and dismissed
 }
 
-//-(void)viewDidAppear:(BOOL)animated {
-//  [self requestMicPermission];
-//}
+-(void)viewWillAppear:(BOOL)animated {
+  [self resizeAndRepositionBasedOnOrientation:nil];
+}
+
+-(void)resizeAndRepositionBasedOnOrientation:(NSNotification *)notification {
+  
+  NSLog(@"status bar height is %.2f", _statusBarHeight);
+  const CGFloat minimumScreenHeight = _statusBarHeight + kImageViewHeight + kPickerHeight + kBottomPadding;
+  const CGFloat minimumScreenWidth = kImageViewWidth + kPickerWidth + (kSidePadding * 2);
+  
+  CGFloat imageViewHeight;
+  CGFloat imageViewWidth;
+  CGFloat verticalMargin;
+  CGFloat horizontalMargin;
+  
+  UIDevice *device = [UIDevice currentDevice];
+  UIDeviceOrientation orientation = device.orientation;
+  
+  switch (orientation) {
+      
+    case UIDeviceOrientationPortraitUpsideDown:
+      
+      NSLog(@"portrait upside down");
+      imageViewHeight = _screenLong > minimumScreenHeight ?
+          kImageViewHeight : _screenLong - _statusBarHeight - kPickerHeight - kBottomPadding;
+      verticalMargin = (_screenLong - _statusBarHeight - imageViewHeight - kPickerHeight - kBottomPadding) / 3;
+      
+      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _screenLong - imageViewHeight - kBottomPadding - verticalMargin, kImageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake((_screenShort - kPickerWidth) / 2, _statusBarHeight + verticalMargin, kPickerWidth, kPickerHeight);
+      
+      break;
+      
+    case UIDeviceOrientationLandscapeLeft:
+      
+      NSLog(@"landscape left");
+      imageViewWidth = _screenLong > minimumScreenWidth ?
+          kImageViewWidth : _screenLong - kPickerWidth - (kSidePadding * 2);
+      imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
+      horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
+      
+      self.imageView.frame = CGRectMake(horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, (_screenShort - kPickerHeight) / 2, kPickerWidth, kPickerHeight);
+      
+      break;
+      
+    case UIDeviceOrientationLandscapeRight:
+      
+      NSLog(@"landscape right");
+
+      imageViewWidth = _screenLong > minimumScreenWidth ?
+          kImageViewWidth : _screenLong - kPickerWidth - (kSidePadding * 2);
+      imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
+      horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
+      
+      self.imageView.frame = CGRectMake(_screenLong - imageViewWidth - horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake(horizontalMargin, (_screenShort - kPickerHeight) / 2, kPickerWidth, kPickerHeight);
+      
+      break;
+
+    case UIDeviceOrientationPortrait:
+    default:
+      
+      NSLog(@"portrait");
+      imageViewHeight = _screenLong > minimumScreenHeight ?
+          kImageViewHeight : _screenLong - _statusBarHeight - kPickerHeight - kBottomPadding;
+      verticalMargin = (_screenLong - _statusBarHeight - imageViewHeight - kPickerHeight - kBottomPadding) / 3;
+      NSLog(@"vertical margin is %.2f", verticalMargin);
+      
+      self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _statusBarHeight + verticalMargin, kImageViewWidth, imageViewHeight);
+      self.cardPicker.frame = CGRectMake((_screenShort - kPickerWidth) / 2, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
+      
+      break;
+  }
+  
+  self.activityIndicator.center = self.imageView.center;
+}
 
 -(void)showFirstCard {
   [self pickerView:self.cardPicker didSelectRow:0 inComponent:0];
@@ -86,6 +182,19 @@
 
 #pragma mark - setup methods
 
+-(void)instantiatePicker {
+  self.cardPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 0, 290, 162)];
+  [self.view addSubview:self.cardPicker];
+  self.cardPicker.dataSource = self;
+  self.cardPicker.delegate = self;
+}
+
+-(void)instantiateActivityIndicator {
+  self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+  [self.view addSubview:self.activityIndicator];
+  self.activityIndicator.hidesWhenStopped = YES;
+}
+
 -(void)requestMicPermission {
   [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
     if (granted) {
@@ -104,7 +213,9 @@
   }];
 }
 
--(void)declareImageViewProperties {
+-(void)instantiateImageView {
+  self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 290, 396)];
+  [self.view addSubview:self.imageView];
   self.imageView.contentMode = UIViewContentModeScaleAspectFit;
 }
 
@@ -142,9 +253,18 @@
   
   self.cardNames = [arrayWithNoDuplicatesAndFilesRemoved sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 
-//  for (NSString *cardName in self.cardNames) {
-//    NSLog(@"%@", cardName);
-//  }
+  NSUInteger longestCardNameLength = 0;
+  NSString *longestCardName;
+  for (NSString *cardName in self.cardNames) {
+    NSLog(@"%@", cardName);
+    if (cardName.length > longestCardNameLength) {
+      longestCardNameLength = cardName.length;
+      longestCardName = cardName;
+    }
+  }
+  
+  NSLog(@"longestCardName is %i, %@", longestCardNameLength, longestCardName);
+  
 //
 //  NSLog(@"count is %lu", (unsigned long)self.cardNames.count);
 }
@@ -327,6 +447,10 @@
 
 -(UIStatusBarStyle)preferredStatusBarStyle {
   return UIStatusBarStyleLightContent;
+}
+
+-(NSUInteger)supportedInterfaceOrientations {
+  return UIInterfaceOrientationMaskAll;
 }
 
 @end
