@@ -99,7 +99,9 @@
   CGFloat horizontalMargin;
   
   CGFloat pickerAndStatusHorizontalMargin;
-  CGFloat pickerAhdStatusVerticalMargin;
+  CGFloat pickerAndStatusVerticalMargin;
+  
+  CGFloat verticalMarginMultiplier = 0.9f;
   
   UIDevice *device = [UIDevice currentDevice];
   UIDeviceOrientation orientation = device.orientation;
@@ -114,8 +116,8 @@
       pickerAndStatusHorizontalMargin = (_screenShort - kPickerWidth - kStatusLabelWidth) / 3;
       
       self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _statusBarHeight + verticalMargin, kImageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake(pickerAndStatusHorizontalMargin, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
-      self.statusView.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
+      self.cardPicker.frame = CGRectMake(_screenShort - kPickerWidth - pickerAndStatusHorizontalMargin, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
+      self.statusView.frame = CGRectMake(pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
       self.statusView.center = CGPointMake(self.statusView.center.x, self.cardPicker.center.y);
       break;
       
@@ -138,11 +140,11 @@
       imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
       horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
       
-      pickerAhdStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
+      pickerAndStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
       
       self.imageView.frame = CGRectMake(horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
-      self.statusView.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, _screenShort - kPickerHeight - pickerAndStatusVerticalMargin * verticalMarginMultiplier, kPickerWidth, kPickerHeight);
+      self.statusView.frame = CGRectMake(0, pickerAndStatusVerticalMargin / verticalMarginMultiplier, kStatusLabelWidth, kStatusLabelHeight);
       self.statusView.center = CGPointMake(self.cardPicker.center.x, self.statusView.center.y);
       break;
       
@@ -152,11 +154,11 @@
       imageViewHeight = _screenShort > kImageViewHeight ? kImageViewHeight : _screenShort;
       horizontalMargin = (_screenLong - imageViewWidth - kPickerWidth) / 3;
       
-      pickerAhdStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
+      pickerAndStatusVerticalMargin = (_screenShort - kPickerHeight - kStatusLabelHeight) / 3;
       
       self.imageView.frame = CGRectMake(_screenLong - imageViewWidth - horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
-      self.cardPicker.frame = CGRectMake(horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
-      self.statusView.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.cardPicker.frame = CGRectMake(horizontalMargin, _screenShort - kPickerHeight - pickerAndStatusVerticalMargin * verticalMarginMultiplier, kPickerWidth, kPickerHeight);
+      self.statusView.frame = CGRectMake(0, pickerAndStatusVerticalMargin / verticalMarginMultiplier, kStatusLabelWidth, kStatusLabelHeight);
       self.statusView.center = CGPointMake(self.cardPicker.center.x, self.statusView.center.y);
       break;
 
@@ -246,10 +248,10 @@
 -(void)requestMicPermission {
   [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
     if (granted) {
-      [self updateStatusViewForOpenEarsStatus:kOpenEarsLoading];
       
 //      NSLog(@"permission granted in requestMicPermission");
       if (!self.speechEngine) {
+        [self updateStatusViewForOpenEarsStatus:kOpenEarsLoading];
         self.speechEngine = [SpeechEngine new];
         self.speechEngine.delegate = self;
         
