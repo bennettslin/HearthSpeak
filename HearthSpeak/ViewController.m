@@ -53,6 +53,14 @@
 @synthesize micAlertController = _micAlertController;
 
 -(void)viewDidLoad {
+  
+    // 1. In Developer Portal, register new App ID
+    // 2. Add provisioning profile for distribution, name it "[app name] App Store",
+    //    and verify it was added in Xcode under Xcode > Preferences > Accounts
+    // 3. In iTunes Connect, add new app with version "1.0" and SKU "BSL[app number]"
+    // 4. Fill out all details and submit screenshots
+    // 5. In Xcode, create build under Product > Archive with iOS Device selected
+  
   [super viewDidLoad];
   
   _statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
