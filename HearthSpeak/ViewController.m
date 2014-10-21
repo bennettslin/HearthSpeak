@@ -30,7 +30,7 @@
 
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIPickerView *cardPicker;
-@property (strong, nonatomic) UILabel *statusLabel;
+@property (strong, nonatomic) UIImageView *statusView;
 
 @property (strong, nonatomic) UIAlertController *sessionAlertController;
 @property (strong, nonatomic) UIAlertController *micAlertController;
@@ -67,10 +67,10 @@
   }
 
   self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wood_background.jpg"]];
-  
+
+  [self instantiateStatusView];
   [self instantiatePicker];
   [self instantiateImageView];
-  [self instantiateStatusLabel];
   [self instantiateActivityIndicator];
   [self populateCardNames];
   [self instantiateSessions];
@@ -115,8 +115,8 @@
       
       self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _statusBarHeight + verticalMargin, kImageViewWidth, imageViewHeight);
       self.cardPicker.frame = CGRectMake(pickerAndStatusHorizontalMargin, _screenLong - kPickerHeight - kBottomPadding - verticalMargin, kPickerWidth, kPickerHeight);
-      self.statusLabel.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
-      self.statusLabel.center = CGPointMake(self.statusLabel.center.x, self.cardPicker.center.y);
+      self.statusView.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusView.center = CGPointMake(self.statusView.center.x, self.cardPicker.center.y);
       break;
       
     case UIDeviceOrientationPortraitUpsideDown:
@@ -128,8 +128,8 @@
       
       self.imageView.frame = CGRectMake((_screenShort - kImageViewWidth) / 2, _screenLong - imageViewHeight - kBottomPadding - verticalMargin, kImageViewWidth, imageViewHeight);
       self.cardPicker.frame = CGRectMake(pickerAndStatusHorizontalMargin, _statusBarHeight + verticalMargin, kPickerWidth, kPickerHeight);
-      self.statusLabel.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
-      self.statusLabel.center = CGPointMake(self.statusLabel.center.x, self.cardPicker.center.y);
+      self.statusView.frame = CGRectMake(_screenShort - kStatusLabelWidth - pickerAndStatusHorizontalMargin, 0, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusView.center = CGPointMake(self.statusView.center.x, self.cardPicker.center.y);
       break;
       
     case UIDeviceOrientationLandscapeLeft:
@@ -142,8 +142,8 @@
       
       self.imageView.frame = CGRectMake(horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
       self.cardPicker.frame = CGRectMake(_screenLong - kPickerWidth - horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
-      self.statusLabel.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
-      self.statusLabel.center = CGPointMake(self.cardPicker.center.x, self.statusLabel.center.y);
+      self.statusView.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusView.center = CGPointMake(self.cardPicker.center.x, self.statusView.center.y);
       break;
       
     case UIDeviceOrientationLandscapeRight:
@@ -156,8 +156,8 @@
       
       self.imageView.frame = CGRectMake(_screenLong - imageViewWidth - horizontalMargin, (_screenShort - imageViewHeight) / 2, imageViewWidth, imageViewHeight);
       self.cardPicker.frame = CGRectMake(horizontalMargin, pickerAhdStatusVerticalMargin, kPickerWidth, kPickerHeight);
-      self.statusLabel.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
-      self.statusLabel.center = CGPointMake(self.cardPicker.center.x, self.statusLabel.center.y);
+      self.statusView.frame = CGRectMake(0, _screenShort - kStatusLabelHeight - pickerAhdStatusVerticalMargin, kStatusLabelWidth, kStatusLabelHeight);
+      self.statusView.center = CGPointMake(self.cardPicker.center.x, self.statusView.center.y);
       break;
 
       default:
@@ -183,7 +183,7 @@
 
 -(UIAlertController *)micAlertController {
   if (!_micAlertController) {
-    _micAlertController = [UIAlertController alertControllerWithTitle:@"Can't hear you grunt!" message:@"Go to Settings\u00a0> Privacy\u00a0> Microphone to grant access." preferredStyle:UIAlertControllerStyleAlert];
+    _micAlertController = [UIAlertController alertControllerWithTitle:@"Can't hear you!" message:@"Go to Settings\u00a0> Privacy\u00a0> Microphone to grant access." preferredStyle:UIAlertControllerStyleAlert];
     [_micAlertController addAction:[UIAlertAction actionWithTitle:@"Okay" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
       [self pickerView:self.cardPicker didSelectRow:[self.cardPicker selectedRowInComponent:0] inComponent:0];
     }]];
@@ -206,26 +206,37 @@
   self.activityIndicator.hidesWhenStopped = YES;
 }
 
--(void)instantiateStatusLabel {
-  self.statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kStatusLabelWidth, kStatusLabelHeight)];
-  self.statusLabel.font = [UIFont fontWithName:kBelweFont size:16];
-  self.statusLabel.adjustsFontSizeToFitWidth = YES;
-  [self.view addSubview:self.statusLabel];
+-(void)instantiateStatusView {
+  self.statusView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kStatusLabelWidth, kStatusLabelHeight)];
+  [self.view addSubview:self.statusView];
 }
 
--(void)updateStatusLabelForOpenEarsStatus:(OpenEarsStatus)status {
+-(void)updateStatusViewForOpenEarsStatus:(OpenEarsStatus)status {
+  
+  UIImage *imageZero = [UIImage imageNamed:@"ear_loading0"];
+  UIImage *imageOne = [UIImage imageNamed:@"ear_loading1"];
+  UIImage *imageTwo = [UIImage imageNamed:@"ear_loading2"];
+  UIImage *imageThree = [UIImage imageNamed:@"ear_loading3"];
+  
+  NSArray *imagesArray = @[imageZero, imageOne, imageTwo, imageThree];
+  
   switch (status) {
     case kOpenEarsNotAvailable:
-      self.statusLabel.text = @"mic not available";
-      self.statusLabel.textColor = [UIColor redColor];
+//      self.statusView.text = @"mic not available";
+      [self.statusView stopAnimating];
+      self.statusView.image = [UIImage imageNamed:@"ear_unavailable"];
       break;
     case kOpenEarsLoading:
-      self.statusLabel.text = @"loading...";
-      self.statusLabel.textColor = [UIColor orangeColor];
+//      self.statusView.text = @"loading...";
+      self.statusView.animationImages = imagesArray;
+      self.statusView.animationDuration = 1.5f;
+      self.statusView.animationRepeatCount = 0;
+      [self.statusView startAnimating];
       break;
     case kOpenEarsStartedListening:
-      self.statusLabel.text = @"listening";
-      self.statusLabel.textColor = [UIColor greenColor];
+//      self.statusView.text = @"listening";
+      [self.statusView stopAnimating];
+      self.statusView.image = [UIImage imageNamed:@"ear_listening"];
       break;
     default:
       break;
@@ -235,6 +246,8 @@
 -(void)requestMicPermission {
   [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
     if (granted) {
+      [self updateStatusViewForOpenEarsStatus:kOpenEarsLoading];
+      
 //      NSLog(@"permission granted in requestMicPermission");
       if (!self.speechEngine) {
         self.speechEngine = [SpeechEngine new];
@@ -252,7 +265,7 @@
     } else {
 //      NSLog(@"permission not granted in requestMicPermission");
       [self handleMicError];
-      [self updateStatusLabelForOpenEarsStatus:kOpenEarsNotAvailable];
+      [self updateStatusViewForOpenEarsStatus:kOpenEarsNotAvailable];
     }
   }];
 }

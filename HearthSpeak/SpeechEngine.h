@@ -27,6 +27,6 @@
 -(void)handleMicError;
 -(void)movePickerToClosestCardForHypothesisedString:(NSString *)hypothesis;
 -(void)startActivityIndicator;
--(void)updateStatusLabelForOpenEarsStatus:(OpenEarsStatus)status;
+-(void)updateStatusViewForOpenEarsStatus:(OpenEarsStatus)status;
 
 @end

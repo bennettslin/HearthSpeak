@@ -30,11 +30,7 @@
 
 -(void)setupOpenEarsWithCardNames:(NSArray *)cardNames {
   
-  [self.delegate updateStatusLabelForOpenEarsStatus:kOpenEarsLoading];
-  
   self.languageModelGenerator = [LanguageModelGenerator new];
-  
-    //  NSArray *uppercaseWords = @[@"CONCEAL"];
   
   NSArray *uppercaseWords = [self returnStrippedUppercaseArray:cardNames];
   NSSet *noDoublesSet = [NSSet setWithArray:uppercaseWords];
@@ -107,7 +103,7 @@
 -(void)pocketsphinxDidStartListening {
     // gets called continuously
   NSLog(@"Now listening.");
-  [self.delegate updateStatusLabelForOpenEarsStatus:kOpenEarsStartedListening];
+  [self.delegate updateStatusViewForOpenEarsStatus:kOpenEarsStartedListening];
 }
 
 -(void)pocketsphinxDidDetectSpeech {
@@ -120,6 +116,7 @@
 
 -(void)pocketsphinxDidStopListening {
 //  NSLog(@"Stopped listening.");
+  [self.delegate updateStatusViewForOpenEarsStatus:kOpenEarsNotAvailable];
 }
 
 -(void)pocketsphinxDidSuspendRecognition {

@@ -17,6 +17,12 @@
 		3F39626119F0C09600432C0B /* Promotion.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625819F0C09600432C0B /* Promotion.enUS.json */; };
 		3F39626219F0C09600432C0B /* Reward.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625919F0C09600432C0B /* Reward.enUS.json */; };
 		3F39626319F0C09600432C0B /* System.enUS.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F39625A19F0C09600432C0B /* System.enUS.json */; };
+		3F45000619F5FB180018237F /* ear_listening.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000019F5FB180018237F /* ear_listening.png */; };
+		3F45000719F5FB180018237F /* ear_loading0.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000119F5FB180018237F /* ear_loading0.png */; };
+		3F45000819F5FB180018237F /* ear_loading1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000219F5FB180018237F /* ear_loading1.png */; };
+		3F45000919F5FB180018237F /* ear_loading2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000319F5FB180018237F /* ear_loading2.png */; };
+		3F45000A19F5FB180018237F /* ear_loading3.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000419F5FB180018237F /* ear_loading3.png */; };
+		3F45000B19F5FB180018237F /* ear_unavailable.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F45000519F5FB180018237F /* ear_unavailable.png */; };
 		3F5DC5CB19F48DDD00C42911 /* DogiesLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F5DC5CA19F48DDD00C42911 /* DogiesLogo.png */; };
 		3F7C65AE19F0DE1400A59F7D /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3F7C65AA19F0DE1400A59F7D /* AcousticModelEnglish.bundle */; };
 		3F7C65B019F0DE1400A59F7D /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F7C65AC19F0DE1400A59F7D /* OpenEars.framework */; };
@@ -55,6 +61,12 @@
 		3F39625819F0C09600432C0B /* Promotion.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Promotion.enUS.json; sourceTree = "<group>"; };
 		3F39625919F0C09600432C0B /* Reward.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Reward.enUS.json; sourceTree = "<group>"; };
 		3F39625A19F0C09600432C0B /* System.enUS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = System.enUS.json; sourceTree = "<group>"; };
+		3F45000019F5FB180018237F /* ear_listening.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_listening.png; sourceTree = "<group>"; };
+		3F45000119F5FB180018237F /* ear_loading0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_loading0.png; sourceTree = "<group>"; };
+		3F45000219F5FB180018237F /* ear_loading1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_loading1.png; sourceTree = "<group>"; };
+		3F45000319F5FB180018237F /* ear_loading2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_loading2.png; sourceTree = "<group>"; };
+		3F45000419F5FB180018237F /* ear_loading3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_loading3.png; sourceTree = "<group>"; };
+		3F45000519F5FB180018237F /* ear_unavailable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ear_unavailable.png; sourceTree = "<group>"; };
 		3F45FFDB19F5C74D0018237F /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		3F5DC5CA19F48DDD00C42911 /* DogiesLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DogiesLogo.png; sourceTree = "<group>"; };
 		3F7C65AA19F0DE1400A59F7D /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
@@ -134,6 +146,12 @@
 		3FDB49B719F0BD4F0091456F /* HearthSpeak */ = {
 			isa = PBXGroup;
 			children = (
+				3F45000019F5FB180018237F /* ear_listening.png */,
+				3F45000119F5FB180018237F /* ear_loading0.png */,
+				3F45000219F5FB180018237F /* ear_loading1.png */,
+				3F45000319F5FB180018237F /* ear_loading2.png */,
+				3F45000419F5FB180018237F /* ear_loading3.png */,
+				3F45000519F5FB180018237F /* ear_unavailable.png */,
 				3F45FFDB19F5C74D0018237F /* Constants.h */,
 				3FE3A07F19F20FBB0085A0A8 /* Belwe.ttf */,
 				3F5DC5CA19F48DDD00C42911 /* DogiesLogo.png */,
@@ -269,21 +287,27 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F45000719F5FB180018237F /* ear_loading0.png in Resources */,
+				3F45000819F5FB180018237F /* ear_loading1.png in Resources */,
 				3FDB49E619F0BD900091456F /* Main.storyboard in Resources */,
 				3FDB49C919F0BD4F0091456F /* LaunchScreen.xib in Resources */,
 				3FE3A08019F20FD20085A0A8 /* Belwe.ttf in Resources */,
 				3F7C65AE19F0DE1400A59F7D /* AcousticModelEnglish.bundle in Resources */,
+				3F45000619F5FB180018237F /* ear_listening.png in Resources */,
 				3F39626119F0C09600432C0B /* Promotion.enUS.json in Resources */,
 				3FC662FC19F35941005D9051 /* Images.xcassets in Resources */,
 				3F39626319F0C09600432C0B /* System.enUS.json in Resources */,
 				3F39625F19F0C09600432C0B /* Expert.enUS.json in Resources */,
 				3F39626019F0C09600432C0B /* Missions.enUS.json in Resources */,
 				3FDB49E819F0BDA20091456F /* allSets.enUS.json in Resources */,
+				3F45000A19F5FB180018237F /* ear_loading3.png in Resources */,
+				3F45000B19F5FB180018237F /* ear_unavailable.png in Resources */,
 				3F5DC5CB19F48DDD00C42911 /* DogiesLogo.png in Resources */,
 				3F39626219F0C09600432C0B /* Reward.enUS.json in Resources */,
 				3F39625E19F0C09600432C0B /* Debug.enUS.json in Resources */,
 				3F0F4C5819F32A8900C8B165 /* wood_background.jpg in Resources */,
 				3F39625C19F0C09600432C0B /* Credits.enUS.json in Resources */,
+				3F45000919F5FB180018237F /* ear_loading2.png in Resources */,
 				3F39625B19F0C09600432C0B /* Basic.enUS.json in Resources */,
 				3F39625D19F0C09600432C0B /* Naxxramas.enUS.json in Resources */,
 			);
